@@ -21,7 +21,10 @@ from typing import Any, Callable
 
 import numpy as np
 
+import jax
+
 partial = functools.partial
+
 
 def safe_zip(*args):
   n = len(args[0])
@@ -181,7 +184,21 @@ def split_merge(predicate, xs):
   return lhs, rhs, merge
 
 def cache(max_size=4096):
-  return functools.lru_cache(maxsize=max_size)
+  def wrap(f):
+    cached = functools.lru_cache(maxsize=max_size)(f)
+
+    @functools.wraps(f)
+    def wrapper(*args, **kwargs):
+      if jax.core.debug_state.check_leaks:
+        return f(*args, **kwargs)
+      else:
+        return cached(*args, **kwargs)
+
+    wrapper.cache_clear = cached.cache_clear
+    wrapper.cache_info = cached.cache_info
+    return wrapper
+  return wrap
+
 
 memoize = functools.lru_cache(maxsize=None)
 
