@@ -200,7 +200,7 @@ def cache(max_size=4096):
   return wrap
 
 
-memoize = functools.lru_cache(maxsize=None)
+memoize: Callable[[Callable], Any] = functools.lru_cache(maxsize=None)
 
 def prod(xs):
   out = 1

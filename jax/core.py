@@ -1160,7 +1160,7 @@ class AbstractToken(AbstractValue):
       assert False, f"Cannot join {self} with {other}"
   def str_short(self): return 'Tok'
 
-abstract_token = AbstractToken()
+abstract_token: AbstractToken = AbstractToken()
 
 
 def raise_to_shaped(aval: AbstractValue, weak_type=None):
