@@ -24,6 +24,7 @@ import warnings
 import weakref
 import functools
 import itertools as it
+import sys
 
 from absl import logging
 from absl.testing import absltest, parameterized
@@ -2267,6 +2268,8 @@ class APITest(jtu.JaxTestCase):
       f(np.arange(5.))  # doesn't crash
 
   def test_leak_checker_avoids_false_positives_scan_vmap_2(self):
+    if sys.version_info < (3, 7):
+      raise unittest.SkipTest("test seems to require more recent Python")
     if not config.omnistaging_enabled:
       raise unittest.SkipTest("test only works with omnistaging")
 
