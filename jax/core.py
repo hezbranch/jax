@@ -762,14 +762,16 @@ def new_main(trace_type: Type[Trace],
     t = ref(main)
     del main
     if t() is not None:
-      # handle case where gc doesn't see the leak (Python internal error?)
-      # TODO(mattjj): investigate this issue
-      refs = gc.get_referrers
-      if not (len(refs(t())) == 1 and                          # Trace
-              len(refs(refs(t())[0])) == 1 and                 # Tracer
-              len(refs(refs(refs(t())[0])[0])) == 1 and        # Tracers arglist
-              len(refs(refs(refs(refs(t())[0])[0])[0])) == 0): # nothing...
-        raise Exception(f'Leaked trace {t()}')
+      raise Exception(f'Leaked trace {t()}')
+
+      # # handle case where gc doesn't see the leak (Python internal error?)
+      # # TODO(mattjj): investigate this issue
+      # refs = gc.get_referrers
+      # if not (len(refs(t())) == 1 and                          # Trace
+      #         len(refs(refs(t())[0])) == 1 and                 # Tracer
+      #         len(refs(refs(refs(t())[0])[0])) == 1 and        # Tracers arglist
+      #         len(refs(refs(refs(refs(t())[0])[0])[0])) == 0): # nothing...
+      #   raise Exception(f'Leaked trace {t()}')
 
 @contextmanager
 def new_base_main(trace_type: Type[Trace]) -> Generator[MainTrace, None, None]:
